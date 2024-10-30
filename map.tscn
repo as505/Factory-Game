@@ -1,0 +1,61 @@
+[gd_scene load_steps=11 format=3 uid="uid://dgpce5aphg1ii"]
+
+[ext_resource type="Texture2D" uid="uid://deftull64haen" path="res://Textures/Tile.png" id="1_5bqol"]
+[ext_resource type="Texture2D" uid="uid://dqn4gd7ufpwkg" path="res://Textures/Tile-Select.png" id="2_277b2"]
+[ext_resource type="Script" path="res://Scripts/TileMapSelect.cs" id="3_5l1rc"]
+[ext_resource type="Script" path="res://Scripts/hotbar_button.cs" id="4_4bgi3"]
+[ext_resource type="Script" path="res://Scripts/HeldItem.cs" id="5_jvov8"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_x05h3"]
+texture = ExtResource("1_5bqol")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_oyftn"]
+texture = ExtResource("2_277b2")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSet" id="TileSet_t664c"]
+tile_size = Vector2i(32, 32)
+sources/0 = SubResource("TileSetAtlasSource_x05h3")
+sources/1 = SubResource("TileSetAtlasSource_oyftn")
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_m8ujp"]
+size = Vector2(16, 16)
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_w4tnu"]
+size = Vector2(16, 16)
+
+[node name="Map" type="Node2D"]
+
+[node name="TileMap" type="TileMap" parent="."]
+tile_set = SubResource("TileSet_t664c")
+format = 2
+layer_1/tile_data = PackedInt32Array()
+script = ExtResource("3_5l1rc")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+anchor_mode = 0
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="TextureButton" type="TextureButton" parent="Control"]
+layout_mode = 0
+offset_left = 52.0
+offset_top = 527.0
+offset_right = 79.0
+offset_bottom = 553.0
+texture_normal = SubResource("PlaceholderTexture2D_m8ujp")
+texture_pressed = SubResource("PlaceholderTexture2D_w4tnu")
+script = ExtResource("4_4bgi3")
+
+[node name="HeldItem" type="Sprite2D" parent="."]
+script = ExtResource("5_jvov8")
+
+[connection signal="pressed" from="Control/TextureButton" to="TileMap" method="OnButtonPressed"]
+[connection signal="pressed" from="Control/TextureButton" to="HeldItem" method="OnButtonPressed"]
