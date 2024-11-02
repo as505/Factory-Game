@@ -11,6 +11,12 @@ public partial class TileMapSelect : TileMap
 
 	Dictionary<Vector2I, int> MapDict = new Dictionary<Vector2I, int>();
 	private PackedScene _beltScene = (PackedScene)GD.Load("res://Objects/conv_belt.tscn");
+	private string _beltATexture = "";
+	private PackedScene _converter = (PackedScene)GD.Load("res://Objects/machines.tscn");
+	private string _converterTexture = "";
+
+	private PackedScene currentEquiped;
+
 	public override void _Ready()
 	{
 		/*
@@ -38,6 +44,18 @@ public partial class TileMapSelect : TileMap
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
 	{
+		//Keypresses
+		if (Input.IsActionJustPressed("Hotbar_1"))
+		{
+			GD.Print("1");
+			currentEquiped = _beltScene;
+		}
+
+		if (Input.IsActionJustPressed("Hotbar_2"))
+		{
+			GD.Print("2");
+			currentEquiped = _converter;
+		}
 		//var map = GetNode("res://map.tscn");
 		var tile = LocalToMap(GetGlobalMousePosition());
 
@@ -72,14 +90,15 @@ public partial class TileMapSelect : TileMap
 
     public override void _Input(InputEvent @event)
     {	
-
 		if (@event is InputEventMouseButton mouseEvent && mouseEvent.Pressed)
 		{
 			/*
 			belt.GetNode<AnimatedSprite2D>("Area2D/AnimatedSprite2D").Play();
 			*/
-
-			MakeInstancedObject(_beltScene, "Area2D/AnimatedSprite2D");
+			if (currentEquiped != null)
+			{
+				MakeInstancedObject(currentEquiped, "Area2D/AnimatedSprite2D");
+			}
     	}	
 
 	}
