@@ -15,7 +15,7 @@ public partial class TileMapSelect : TileMap
 	private PackedScene _converter = (PackedScene)GD.Load("res://Objects/machines.tscn");
 	private string _converterTexture = "";
 
-	private PackedScene currentEquiped;
+	private Node currentEquiped;
 
 	public override void _Ready()
 	{
@@ -47,26 +47,24 @@ public partial class TileMapSelect : TileMap
 		//Keypresses
 		if (Input.IsActionJustPressed("Hotbar_1"))
 		{
-			GD.Print("1");
-			currentEquiped = _beltScene;
+			currentEquiped = _beltScene.Instantiate();
+			currentEquiped.Name = "Belt";
+			AddChild(currentEquiped);
 		}
 
 		if (Input.IsActionJustPressed("Hotbar_2"))
 		{
-			GD.Print("2");
-			currentEquiped = _converter;
+			currentEquiped = _converter.Instantiate();
+			currentEquiped.Name = "Converter";
+			AddChild(currentEquiped);
 		}
 		//var map = GetNode("res://map.tscn");
 		var tile = LocalToMap(GetGlobalMousePosition());
 
-		Node belt = GetNodeOrNull("uniqueName");
-		if (belt == null){
-			belt = _beltScene.Instantiate();
-			belt.Name = "uniqueName";
-			AddChild(belt);
-			belt.GetNode<AnimatedSprite2D>("Area2D/AnimatedSprite2D").Position = GetGlobalMousePosition();
-		} else {
-			belt.GetNode<AnimatedSprite2D>("Area2D/AnimatedSprite2D").Position = GetGlobalMousePosition();
+		if (currentEquiped != null)
+		{
+			currentEquiped.GetNode<AnimatedSprite2D>("Area2D/AnimatedSprite2D").Position = GetGlobalMousePosition();
+			
 		}
 
 		
@@ -103,12 +101,12 @@ public partial class TileMapSelect : TileMap
 
 	}
 
-	private void MakeInstancedObject(PackedScene Item, string TexturePath)
+	private void MakeInstancedObject(Node Item, string TexturePath)
 	{
-		Node item_instance = Item.Instantiate();
-		AddChild(item_instance);
-		item_instance.GetNode<AnimatedSprite2D>(TexturePath).Play();
+		//Node item_instance = Item.Instantiate();
+		AddChild(Item);
+		Item.GetNode<AnimatedSprite2D>(TexturePath).Play();
 		var tilePosition = LocalToMap(GetGlobalMousePosition());
-		item_instance.GetNode<AnimatedSprite2D>(TexturePath).Position = tilePosition * 32;
+		Item.GetNode<AnimatedSprite2D>(TexturePath).Position = tilePosition * 32;
 	}
 }
