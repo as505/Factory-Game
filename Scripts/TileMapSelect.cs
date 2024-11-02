@@ -16,6 +16,7 @@ public partial class TileMapSelect : TileMap
 	private string _converterTexture = "";
 
 	private Node currentEquiped;
+	private PackedScene currentEquipedScene;
 
 	public override void _Ready()
 	{
@@ -44,21 +45,38 @@ public partial class TileMapSelect : TileMap
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
 	{
-		//Keypresses
+		// Keypresses
+		// Duplicated code, should be simplified before ading more objects
 		if (Input.IsActionJustPressed("Hotbar_1"))
 		{
+			// Make this code chunk its own function
+
+			Node old = GetNodeOrNull("Equiped"); //Check if an item is already equiped, and destroy it
+			if(old != null)
+			{
+				old.QueueFree();
+			}
 			currentEquiped = _beltScene.Instantiate();
-			currentEquiped.Name = "Belt";
+			currentEquipedScene = _beltScene;
+			currentEquiped.Name = "Equiped";
 			AddChild(currentEquiped);
 		}
 
 		if (Input.IsActionJustPressed("Hotbar_2"))
-		{
+		{	
+			// Make this code chunk its own function
+
+			Node old = GetNodeOrNull("Equiped");
+			if(old != null)
+			{
+				old.QueueFree();
+			}
 			currentEquiped = _converter.Instantiate();
-			currentEquiped.Name = "Converter";
+			currentEquipedScene = _converter;
+			currentEquiped.Name = "Equiped";
 			AddChild(currentEquiped);
 		}
-		//var map = GetNode("res://map.tscn");
+		
 		var tile = LocalToMap(GetGlobalMousePosition());
 
 		if (currentEquiped != null)
@@ -90,20 +108,17 @@ public partial class TileMapSelect : TileMap
     {	
 		if (@event is InputEventMouseButton mouseEvent && mouseEvent.Pressed)
 		{
-			/*
-			belt.GetNode<AnimatedSprite2D>("Area2D/AnimatedSprite2D").Play();
-			*/
-			if (currentEquiped != null)
+			if (currentEquipedScene != null)
 			{
-				MakeInstancedObject(currentEquiped, "Area2D/AnimatedSprite2D");
+				MakeInstancedObject(currentEquipedScene, "Area2D/AnimatedSprite2D");
 			}
     	}	
 
 	}
 
-	private void MakeInstancedObject(Node Item, string TexturePath)
+	private void MakeInstancedObject(PackedScene Instance, string TexturePath)
 	{
-		//Node item_instance = Item.Instantiate();
+		Node Item = Instance.Instantiate();
 		AddChild(Item);
 		Item.GetNode<AnimatedSprite2D>(TexturePath).Play();
 		var tilePosition = LocalToMap(GetGlobalMousePosition());
