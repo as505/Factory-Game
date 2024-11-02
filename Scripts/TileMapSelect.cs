@@ -45,32 +45,27 @@ public partial class TileMapSelect : TileMap
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
 	{
-		// Keypresses
-		// Duplicated code, should be simplified before ading more objects
+		
+		// Change current held buildable
 		if (Input.IsActionJustPressed("Hotbar_1"))
 		{
-			// Make this code chunk its own function
-
 			SwapHeldBuildable(_beltScene);
 		}
 
 		if (Input.IsActionJustPressed("Hotbar_2"))
 		{	
-			// Make this code chunk its own function
-
 			SwapHeldBuildable(_converter);
 		}
-		
-		var tile = LocalToMap(GetGlobalMousePosition());
 
+		// Move current equiped buildable sprite to cursor
 		if (currentEquiped != null)
 		{
 			currentEquiped.GetNode<AnimatedSprite2D>("Area2D/AnimatedSprite2D").Position = GetGlobalMousePosition();
 			
 		}
 
-		
-		
+		// Outline grid when hovered over
+		var tile = LocalToMap(GetGlobalMousePosition());
 
 		for (int x = 0; x < gridSize; x++)
 		{
@@ -83,13 +78,12 @@ public partial class TileMapSelect : TileMap
 		if (MapDict.ContainsKey(tile))
 		{
 			SetCell(1, tile, 1, new Vector2I(0,0), 0);
-
-			
 		}
 	}
 
     public override void _Input(InputEvent @event)
     {	
+		// Place down equiped buildable
 		if (@event is InputEventMouseButton mouseEvent && mouseEvent.Pressed)
 		{
 			if (currentEquipedScene != null)
@@ -112,15 +106,16 @@ public partial class TileMapSelect : TileMap
 	private void SwapHeldBuildable(PackedScene NewEquipedScene)
 	{
 		// Check if an item is already equiped, and destroy it
-		Node old = GetNodeOrNull("Equiped");  // likely bugged
+		Node old = GetNodeOrNull("Equiped");
 			if(old != null) 
 			{
+				RemoveChild(old);
 				old.QueueFree();
 			}
 			currentEquiped = NewEquipedScene.Instantiate();
 			currentEquipedScene = NewEquipedScene;
-			currentEquiped.Name = "Equiped";
 			AddChild(currentEquiped);
+			currentEquiped.Name = "Equiped";
 	}
 }
 
