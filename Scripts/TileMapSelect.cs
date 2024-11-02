@@ -51,30 +51,14 @@ public partial class TileMapSelect : TileMap
 		{
 			// Make this code chunk its own function
 
-			Node old = GetNodeOrNull("Equiped"); //Check if an item is already equiped, and destroy it
-			if(old != null)
-			{
-				old.QueueFree();
-			}
-			currentEquiped = _beltScene.Instantiate();
-			currentEquipedScene = _beltScene;
-			currentEquiped.Name = "Equiped";
-			AddChild(currentEquiped);
+			SwapHeldBuildable(_beltScene);
 		}
 
 		if (Input.IsActionJustPressed("Hotbar_2"))
 		{	
 			// Make this code chunk its own function
 
-			Node old = GetNodeOrNull("Equiped");
-			if(old != null)
-			{
-				old.QueueFree();
-			}
-			currentEquiped = _converter.Instantiate();
-			currentEquipedScene = _converter;
-			currentEquiped.Name = "Equiped";
-			AddChild(currentEquiped);
+			SwapHeldBuildable(_converter);
 		}
 		
 		var tile = LocalToMap(GetGlobalMousePosition());
@@ -124,4 +108,20 @@ public partial class TileMapSelect : TileMap
 		var tilePosition = LocalToMap(GetGlobalMousePosition());
 		Item.GetNode<AnimatedSprite2D>(TexturePath).Position = tilePosition * 32;
 	}
+
+	private void SwapHeldBuildable(PackedScene NewEquipedScene)
+	{
+		// Check if an item is already equiped, and destroy it
+		Node old = GetNodeOrNull("Equiped");  // likely bugged
+			if(old != null) 
+			{
+				old.QueueFree();
+			}
+			currentEquiped = NewEquipedScene.Instantiate();
+			currentEquipedScene = NewEquipedScene;
+			currentEquiped.Name = "Equiped";
+			AddChild(currentEquiped);
+	}
 }
+
+
