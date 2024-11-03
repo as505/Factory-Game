@@ -9,7 +9,12 @@ public partial class TileMapSelect : TileMap
 	// Called when the node enters the scene tree for the first time.
 	int gridSize = 10;
 
+	// For tiles on the map
 	Dictionary<Vector2I, int> MapDict = new Dictionary<Vector2I, int>();
+	// For placeable buildings
+	Dictionary<Vector2I, int> BuildableDict = new Dictionary<Vector2I, int>();
+
+
 	private PackedScene _beltScene = (PackedScene)GD.Load("res://Objects/conv_belt.tscn");
 	private string _beltATexture = "";
 	private PackedScene _converter = (PackedScene)GD.Load("res://Objects/machines.tscn");
@@ -96,10 +101,18 @@ public partial class TileMapSelect : TileMap
 
 	private void MakeInstancedObject(PackedScene Instance, string TexturePath)
 	{
+		// Check if buildable can be placed
+		// TODO Need to figure out how to handle larger buildings later
+		var tilePosition = LocalToMap(GetGlobalMousePosition());
+		if (BuildableDict.ContainsKey(tilePosition)){
+			return;
+		}
+
+		// Create and place new instance
+		BuildableDict.Add(tilePosition, 1);
 		Node Item = Instance.Instantiate();
 		AddChild(Item);
 		Item.GetNode<AnimatedSprite2D>(TexturePath).Play();
-		var tilePosition = LocalToMap(GetGlobalMousePosition());
 		Item.GetNode<AnimatedSprite2D>(TexturePath).Position = tilePosition * 32;
 	}
 
