@@ -11,8 +11,9 @@ public partial class TileMapSelect : TileMap
 
 	// For tiles on the map
 	Dictionary<Vector2I, int> MapDict = new Dictionary<Vector2I, int>();
+	
 	// For placeable buildings
-	Dictionary<Vector2I, int> BuildableDict = new Dictionary<Vector2I, int>();
+	Dictionary<Vector2I, string> BuildableDict = new Dictionary<Vector2I, string>();
 
 
 	private PackedScene _beltScene = (PackedScene)GD.Load("res://Objects/conv_belt.tscn");
@@ -62,6 +63,21 @@ public partial class TileMapSelect : TileMap
 			SwapHeldBuildable(_converter);
 		}
 
+		// Place equiped buildable
+		if (Input.IsActionPressed("Left_Click"))
+		{
+			if (currentEquipedScene != null)
+			{
+				MakeInstancedObject(currentEquipedScene, "Area2D/AnimatedSprite2D");
+			}
+		}
+
+		// Remove hovered over buildable
+		if (Input.IsActionPressed("Right_Click"))
+		{
+			RemoveInstancedObject();
+		}
+
 		// Move current equiped buildable sprite to cursor
 		if (currentEquiped != null)
 		{
@@ -88,6 +104,7 @@ public partial class TileMapSelect : TileMap
 
     public override void _Input(InputEvent @event)
     {	
+		/*
 		// Place down equiped buildable
 		if (@event is InputEventMouseButton mouseEvent && mouseEvent.Pressed)
 		{
@@ -96,9 +113,11 @@ public partial class TileMapSelect : TileMap
 				MakeInstancedObject(currentEquipedScene, "Area2D/AnimatedSprite2D");
 			}
     	}	
+		*/
 
 	}
 
+	// Places an instanced copy of a buildable object on tilemap, if possible
 	private void MakeInstancedObject(PackedScene Instance, string TexturePath)
 	{
 		// Check if buildable can be placed
@@ -109,13 +128,31 @@ public partial class TileMapSelect : TileMap
 		}
 
 		// Create and place new instance
-		BuildableDict.Add(tilePosition, 1);
 		Node Item = Instance.Instantiate();
 		AddChild(Item);
 		Item.GetNode<AnimatedSprite2D>(TexturePath).Play();
 		Item.GetNode<AnimatedSprite2D>(TexturePath).Position = tilePosition * 32;
+		BuildableDict.Add(tilePosition, Item.Name);
+	}
+ 
+	// Destroy placed object
+	private void RemoveInstancedObject()
+	{
+		var tilePosition = LocalToMap(GetGlobalMousePosition());
+		if (BuildableDict.ContainsKey(tilePosition)){
+			string nodeName = "";
+			BuildableDict.TryGetValue(tilePosition, out nodeName);
+
+			// Destroy buildable
+			Node Buildable = GetNodeOrNull(nodeName);
+			RemoveChild(Buildable);
+			Buildable.QueueFree();
+			// Clear Dict entry to mark buildable as removed
+			BuildableDict.Remove(tilePosition);
+		}
 	}
 
+	// Changes currently equiped buildable, removing the previous item held
 	private void SwapHeldBuildable(PackedScene NewEquipedScene)
 	{
 		// Check if an item is already equiped, and destroy it
