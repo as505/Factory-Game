@@ -7,7 +7,7 @@ public partial class conv_belt : Node2D
 	public override void _Ready()
 	{
 		var anim = GetNode("/root/Map/Animations");
-		anim.Connect(nameof(Animations.SpriteNextFrame), Callable.From(Increment));
+        anim.Connect(nameof(Animations.SpriteNextFrame),  new Callable(this, MethodName.Increment));
 		//anim.Connect("SpriteNextFrame", this, "Increment");
 	}
 
@@ -15,15 +15,10 @@ public partial class conv_belt : Node2D
 	public override void _Process(double delta)
 	{
 	}
-	private void Increment()
+	
+	private void Increment(int frame)
 	{
 		var sprite = GetNode<AnimatedSprite2D>("Area2D/AnimatedSprite2D");
-		GD.Print(sprite.Frame);
-		sprite.Frame += 1;
-		if (sprite.Frame > 4)
-		{
-			sprite.Frame = 0;
-		}
-
+		sprite.Frame = frame;
 	}
 }
