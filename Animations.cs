@@ -7,26 +7,22 @@ public partial class Animations : AnimationPlayer
 {
 	[Signal]
 	public delegate void SpriteNextFrameEventHandler();
-	private double timeCounter = 0;
 	// Called when the node enters the scene tree for the first time.
+	private double timeCounter;
 	public override void _Ready()
 	{
-
+		timeCounter = 0;
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
 	{
-		timeCounter += delta;
-		if (timeCounter > 1/6)
+		timeCounter = timeCounter + delta;
+		//GD.Print(timeCounter);
+		if (timeCounter > 1)
 		{
-			GD.Print(timeCounter);
 			EmitSignal(nameof(SpriteNextFrame));
-			timeCounter = timeCounter%(1/6);
+			timeCounter = timeCounter%(1);
 		}
-	}
-	private void foo ()
-	{
-		return;
 	}
 }

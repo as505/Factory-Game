@@ -17,8 +17,13 @@ public partial class conv_belt : Node2D
 	}
 	private void Increment()
 	{
-		GD.Print("RECIEVE");
 		var sprite = GetNode<AnimatedSprite2D>("Area2D/AnimatedSprite2D");
+		GD.Print(sprite.Frame);
 		sprite.Frame += 1;
+		if (sprite.Frame > 4)
+		{
+			sprite.Frame = 0;
+		}
+
 	}
 }
