@@ -1,10 +1,11 @@
-[gd_scene load_steps=11 format=3 uid="uid://dgpce5aphg1ii"]
+[gd_scene load_steps=14 format=3 uid="uid://dgpce5aphg1ii"]
 
 [ext_resource type="Texture2D" uid="uid://deftull64haen" path="res://Textures/Tile.png" id="1_5bqol"]
 [ext_resource type="Texture2D" uid="uid://dqn4gd7ufpwkg" path="res://Textures/Tile-Select.png" id="2_277b2"]
 [ext_resource type="Script" path="res://Scripts/TileMapSelect.cs" id="3_5l1rc"]
 [ext_resource type="Script" path="res://Scripts/hotbar_button.cs" id="4_4bgi3"]
 [ext_resource type="Script" path="res://Scripts/HeldItem.cs" id="5_jvov8"]
+[ext_resource type="Script" path="res://Animations.cs" id="6_wnq0f"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_x05h3"]
 texture = ExtResource("1_5bqol")
@@ -26,6 +27,15 @@ size = Vector2(16, 16)
 
 [sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_w4tnu"]
 size = Vector2(16, 16)
+
+[sub_resource type="Animation" id="Animation_umrx2"]
+resource_name = "belt"
+step = 0.2
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_sgtmj"]
+_data = {
+"belt": SubResource("Animation_umrx2")
+}
 
 [node name="Map" type="Node2D"]
 
@@ -56,6 +66,12 @@ script = ExtResource("4_4bgi3")
 
 [node name="HeldItem" type="Sprite2D" parent="."]
 script = ExtResource("5_jvov8")
+
+[node name="Animations" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_sgtmj")
+}
+script = ExtResource("6_wnq0f")
 
 [connection signal="pressed" from="Control/TextureButton" to="TileMap" method="OnButtonPressed"]
 [connection signal="pressed" from="Control/TextureButton" to="HeldItem" method="OnButtonPressed"]

@@ -7,6 +7,10 @@ using System.Collections.Generic;
 public partial class TileMapSelect : TileMap
 {
 	// Called when the node enters the scene tree for the first time.
+
+	int GlobalAnimationFrame = 0;
+	int GlobalAnimationFrameCount = 6;
+	Double GlobalAnimationTimer = 0;
 	int gridSize = 10;
 
 	// For tiles on the map
@@ -21,19 +25,11 @@ public partial class TileMapSelect : TileMap
 	private PackedScene _converter = (PackedScene)GD.Load("res://Objects/machines.tscn");
 	private string _converterTexture = "";
 
-	private Node currentEquiped;
+	private Node2D currentEquiped;
 	private PackedScene currentEquipedScene;
 
 	public override void _Ready()
-	{
-		/*
-		Node belt = _beltScene.Instantiate();
-		AddChild(belt);
-		belt.GetNode<AnimatedSprite2D>("Area2D/AnimatedSprite2D").Play();
-		*/
-		//var button = GetNode<TextureButton>("Control/TextureButton");
-		//button.Pressed += OnButtonPressed;
-		
+	{		
 		for (int x = 0; x < gridSize; x++)
 		{
 			for (int y = 0; y < gridSize; y++)
@@ -51,7 +47,15 @@ public partial class TileMapSelect : TileMap
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
 	{
-		
+		// Set current animation frame, tmp
+		GlobalAnimationTimer += delta;
+		if (GlobalAnimationTimer > (1/GlobalAnimationFrameCount))
+		{
+			GlobalAnimationTimer = GlobalAnimationTimer%1;
+			GlobalAnimationFrame = (GlobalAnimationFrame + 1) % GlobalAnimationFrameCount;
+			//GD.Print(GlobalAnimationTimer);
+		}
+
 		// Change current held buildable
 		if (Input.IsActionJustPressed("Hotbar_1"))
 		{
@@ -104,17 +108,6 @@ public partial class TileMapSelect : TileMap
 
     public override void _Input(InputEvent @event)
     {	
-		/*
-		// Place down equiped buildable
-		if (@event is InputEventMouseButton mouseEvent && mouseEvent.Pressed)
-		{
-			if (currentEquipedScene != null)
-			{
-				MakeInstancedObject(currentEquipedScene, "Area2D/AnimatedSprite2D");
-			}
-    	}	
-		*/
-
 	}
 
 	// Places an instanced copy of a buildable object on tilemap, if possible
@@ -128,10 +121,17 @@ public partial class TileMapSelect : TileMap
 		}
 
 		// Create and place new instance
-		Node Item = Instance.Instantiate();
+		Node2D Item = (Node2D)Instance.Instantiate();
 		AddChild(Item);
-		Item.GetNode<AnimatedSprite2D>(TexturePath).Play();
-		Item.GetNode<AnimatedSprite2D>(TexturePath).Position = tilePosition * 32;
+		//Item.GetNode<AnimatedSprite2D>(TexturePath).Play();
+		
+		// Remove maybe
+		//Item.GetNode<AnimatedSprite2D>(TexturePath).Frame = GlobalAnimationFrame; // All animations should be syncronized
+		//Item.GetNode<AnimatedSprite2D>(TexturePath).SetFrameAndProgress(GlobalAnimationFrame, (float)GlobalAnimationTimer);
+
+		// Attempting to sync animations
+		//Item.GetNode<AnimatedSprite2D>(TexturePath).Position = tilePosition * 32;
+		Item.Position = tilePosition * 32;
 		BuildableDict.Add(tilePosition, Item.Name);
 	}
  
@@ -162,11 +162,22 @@ public partial class TileMapSelect : TileMap
 				RemoveChild(old);
 				old.QueueFree();
 			}
-			currentEquiped = NewEquipedScene.Instantiate();
+			currentEquiped = (Node2D)NewEquipedScene.Instantiate();
 			currentEquipedScene = NewEquipedScene;
 			AddChild(currentEquiped);
 			currentEquiped.Name = "Equiped";
 	}
+	
+	/*
+	// Get current frame for syncronized animations,
+	private void GetGlobalFrame(double delta)
+	{
+		var curFps = Engine.GetFramesPerSecond();
+		
+		
+		GlobalAnimationFrame;
+	}
+	*/
 }
 
 

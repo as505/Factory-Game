@@ -1,6 +1,7 @@
-[gd_scene load_steps=8 format=3 uid="uid://7bb5fkaveqp0"]
+[gd_scene load_steps=9 format=3 uid="uid://7bb5fkaveqp0"]
 
 [ext_resource type="Texture2D" uid="uid://b1rgp1608cau4" path="res://Textures/Sprite-0003-Sheet.png" id="1_88ehe"]
+[ext_resource type="Script" path="res://Objects/conv_belt.cs" id="1_nlqfl"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_y35qa"]
 atlas = ExtResource("1_88ehe")
@@ -39,6 +40,9 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_jx7xk")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_y35qa")
 }],
 "loop": true,
 "name": &"default",
@@ -46,12 +50,13 @@ animations = [{
 }]
 
 [node name="Node2D" type="Node2D"]
+script = ExtResource("1_nlqfl")
 
 [node name="Area2D" type="Area2D" parent="."]
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Area2D"]
 texture_filter = 1
 sprite_frames = SubResource("SpriteFrames_usvgs")
-frame = 3
-frame_progress = 0.725071
+frame = 4
+frame_progress = 0.210336
 centered = false
